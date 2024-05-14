@@ -1,0 +1,283 @@
+#Importamos las librerias 
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import KMeans, AgglomerativeClustering
+from sklearn import metrics
+from scipy.cluster.hierarchy import dendrogram, linkage
+from sklearn.metrics import silhouette_score
+from scipy.cluster.hierarchy import cophenet
+from scipy.spatial.distance import pdist
+import warnings
+warnings.filterwarnings('ignore')
+
+#Cargamos el dataset y mostramos las 5 primeras filas
+dataset = pd.read_csv("Mall_Customers.csv")
+dataset.head()
+
+dataset.shape
+
+data=dataset.drop(['Gender'], axis=1)
+
+data.head()
+
+data.describe()
+
+
+data.isna().sum()
+
+data.dropna()
+
+sns.pairplot(data.dropna(), size=4,kind='scatter')
+
+
+# Matriz de correlación
+corr_matrix = data.corr()
+corr_matrix
+
+
+# Diagramas de caja para cada variabl
+sns.boxplot(data=data)
+
+
+# Estandarizar los datos antes de aplicar K-Means
+scaler = StandardScaler()
+X = pd.DataFrame(scaler.fit_transform(data), columns = data.columns)
+X
+
+
+Nc = range(1, 10)
+kmeans = [KMeans(n_clusters=i) for i in Nc]
+kmeans
+score = [kmeans[i].fit(X).score(X) for i in range(len(kmeans))]
+score
+plt.plot(Nc,score, marker='o')
+plt.xlabel('Número de Clusters')
+plt.ylabel('Score')
+plt.title('Elbow Curve')
+plt.show()
+
+
+kmeans = KMeans(n_clusters=3).fit(X)
+centroids = kmeans.cluster_centers_
+centroids
+
+
+# Obtenemos las etiquetas de cada punto de nuestros datos
+labels = kmeans.labels_
+# Obtenemos los centroids
+C = kmeans.cluster_centers_
+colores=['red','green','cyan']
+asignar=[]
+for row in labels:
+    asignar.append(colores[row]) 
+
+
+
+f1 = X['CustomerID'].values
+f2 = X['Age'].values
+plt.scatter(f1, f2, c=asignar, s=70)
+plt.scatter(C[:, 0], C[:, 1], marker='*', c=colores, s=1000)
+plt.title('Datos etiquetados')
+plt.xlabel('CustomerID')
+plt.ylabel('Age')
+plt.show()
+
+
+# Estandarizar los datos antes de aplicar K-Means
+scaler = StandardScaler()
+X = pd.DataFrame(scaler.fit_transform(data), columns = data.columns)
+X
+
+
+
+Nc = range(1, 10)
+kmeans = [KMeans(n_clusters=i) for i in Nc]
+kmeans
+score = [kmeans[i].fit(X).score(X) for i in range(len(kmeans))]
+score
+plt.plot(Nc,score, marker='o')
+plt.xlabel('Número de Clusters')
+plt.ylabel('Score')
+plt.title('Elbow Curve')
+plt.show()
+
+
+kmeans = KMeans(n_clusters=3).fit(X)
+centroids = kmeans.cluster_centers_
+centroids
+
+
+# Obtenemos las etiquetas de cada punto de nuestros datos
+labels = kmeans.labels_
+# Obtenemos los centroids
+C = kmeans.cluster_centers_
+colores=['red','green','cyan']
+asignar=[]
+for row in labels:
+    asignar.append(colores[row]) 
+
+
+f1 = X['CustomerID'].values
+f2 = X['Age'].values
+plt.scatter(f1, f2, c=asignar, s=70)
+plt.scatter(C[:, 0], C[:, 1], marker='*', c=colores, s=1000)
+plt.title('Datos etiquetados')
+plt.xlabel('CustomerID')
+plt.ylabel('Age')
+plt.show()
+
+
+
+
+f1 = X['Annual Income (k$)'].values
+f2 = X['Spending Score (1-100)'].values
+plt.scatter(f1, f2, c=asignar, s=70)
+plt.scatter(C[:, 2], C[:, 3], marker='*', c=colores, s=1000)
+plt.title('Datos etiquetados')
+plt.xlabel('Annual Income (k$)')
+plt.ylabel('Spending Score (1-100)')
+plt.show()
+
+
+
+
+f1 = X['CustomerID'].values
+f2 = X['Age'].values
+plt.scatter(f1, f2, c=asignar, s=70)
+plt.scatter(C[:, 0], C[:, 2], marker='*', c=colores, s=1000)
+plt.title('Datos etiquetados')
+plt.xlabel('CustomerID')
+plt.ylabel('Age')
+plt.show()
+
+
+X_new = scaler.fit_transform(np.array([[5.4,3.3,1.2,0.25]]))  
+new_label = kmeans.predict(X_new)
+color=[]
+for row in new_label:
+    color.append(colores[row])    
+print(new_label)
+print(color)
+
+
+
+
+# Calcular medidas de calidad para K-Means
+print("Medidas de calidad para K-Means:")
+print("Puntaje de silueta:", metrics.silhouette_score(X, labels))
+print("Índice de Calinski-Harabasz:", metrics.calinski_harabasz_score(X, labels))
+print("Inertia (suma de cuadrados dentro de los clusters):", kmeans.inertia_)
+print("Davies-Bouldin Index:", metrics.davies_bouldin_score(X, labels))
+
+
+
+
+ward_clustering = linkage(X, method="ward", metric="euclidean")
+plt.figure(figsize=(20, 7))
+dendrogram(ward_clustering)
+plt.axhline(y = 10, color = 'r', linestyle = '-')
+plt.title('Dendrograma')
+plt.xlabel('Sample index')
+plt.ylabel('Euclidean distance')
+plt.show()
+
+
+hier_clustering = AgglomerativeClustering(n_clusters=3)
+labels_hier = hier_clustering.fit_predict(X)
+labels_hier
+
+
+# Obtenemos las etiquetas de cada punto de nuestros datos
+labels = labels_hier
+colores=['red','green','cyan']
+asignar=[]
+for row in labels:
+    asignar.append(colores[row])
+
+
+
+f1 = X['CustomerID'].values
+f2 = X['Age'].values
+plt.scatter(f1, f2, c=asignar, s=70)
+plt.title('Datos etiquetados')
+plt.xlabel('CustomerID')
+plt.ylabel('Age')
+plt.show()
+
+
+
+def plot_dendrogram(model, **kwargs):
+    '''
+    This function extracts the information from an AgglomerativeClustering model
+    and plots its dendrogram with the dendrogram function from scipy.cluster.hierarchy
+    '''
+    from scipy.cluster.hierarchy import dendrogram
+    import numpy as np    
+    counts = np.zeros(model.children_.shape[0])
+    n_samples = len(model.labels_)
+    for i, merge in enumerate(model.children_):
+        current_count = 0
+        for child_idx in merge:
+            if child_idx < n_samples:
+                current_count += 1  # leaf node
+            else:
+                current_count += counts[child_idx - n_samples]
+        counts[i] = current_count
+    distances = np.arange(model.children_.shape[0])
+    linkage_matrix = np.column_stack([model.children_, distances, counts]).astype(float)
+    # Plot
+    plt.figure(figsize=(20, 7))
+    dendrogram(linkage_matrix, **kwargs)
+    plt.title('Dendrograma')
+    plt.xlabel('Sample index')
+    plt.ylabel('Euclidean distance')
+    plt.show()
+
+
+
+plot_dendrogram(hier_clustering, color_threshold=0)
+
+
+
+
+# Método silhouette para identificar el número óptimo de clusters
+# ==============================================================================
+range_n_clusters = range(2, 15)
+valores_medios_silhouette = []
+for n_clusters in range_n_clusters:
+    modelo = AgglomerativeClustering(
+                    affinity   = 'euclidean',
+                    linkage    = 'ward',
+                    n_clusters = n_clusters
+             )
+    cluster_labels = modelo.fit_predict(X)
+    silhouette_avg = silhouette_score(X, cluster_labels)
+    valores_medios_silhouette.append(silhouette_avg)
+fig, ax = plt.subplots(1, 1, figsize=(6, 3.84))
+ax.plot(range_n_clusters, valores_medios_silhouette, marker='o')
+ax.set_title("Evolución de media de los índices silhouette")
+ax.set_xlabel('Número clusters')
+ax.set_ylabel('Media índices silhouette');
+
+
+# Calcular medidas de calidad para Clustering Jerárquico
+print("\nMedidas de calidad para Clustering Jerárquico:")
+print("Puntaje de silueta:", metrics.silhouette_score(X, labels_hier))
+print("Índice de Calinski-Harabasz:", metrics.calinski_harabasz_score(X, labels_hier))
+print("Davies-Bouldin Index:", metrics.davies_bouldin_score(X, labels_hier))
+
+
+
+
+# Calcular el coeficiente de correlación cofenética
+from scipy.cluster.hierarchy import linkage
+# Compute the distances
+X_dist = pdist(X)
+# Compute the linkage matrix
+Z = linkage(X, 'ward')
+# Calculate the cophenetic correlation coefficient
+coef_cofenetico = cophenet(Z, X_dist)
+print("Coeficiente de correlación cofenética:", coef_cofenetico)
