@@ -1,7 +1,9 @@
-# AprendizajeNosupervisado
-Unidad 3 - Tarea 4 - Algoritmos de Aprendizaje no supervisado 
-1.	Dataset k-means e hierarchical clustering - Mall Customer
-Segmentation Data:
-https://www.kaggle.com/vjchoudhary7/customer-segmentation
-tutorial-in-python
-Este dataset contiene información de clientes de un mall. Las variables incluyen género, ingreso, puntaje de gasto, etc. o descárguelo del entorno de aprendizaje junto a la guía de actividades con el nombre Anexo 5 - Dataset Mall Customer Segmentation.zip
+# Aplicar algoritmos de Machine Learning supervisado según el problema, empleando métodos de modelado predictivo como regresión y clasificación
+Tarea 5 - Proyecto Análisis de datos
+1.	Dataset – Titanic dataset:
+https://www.kaggle.com/datasets/yasserh/titanic-dataset
+Set de datos sobre los pasajeros del Titanic. Permite practicar
+modelos de clasificación y regresión para predecir quién sobrevivió
+al naufragio.
+o descárguelo del entorno de aprendizaje junto a la guía de
+actividades con el nombre Anexo 6 - Dataset Titanic.zip
